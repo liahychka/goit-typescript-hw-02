@@ -1,31 +1,54 @@
-import './App.css';
-import Profile from './components/Profile/Profile';
-import userData from './components/userData.json';
-import friends from "./components/friends.json";
-import FriendList from "./components/FriendList/FriendList";
-import transactions from "./components/transactions.json";
-import TransactionHistory from "./components/TransactionHistory/TransactionHistory"
+import { useEffect, useState } from "react";
+import Cafe from "./Cafe/Cafe"
 
-const App = () => {
-  return (
-    <>
-    <div>
-      <Profile
-      name={userData.username}
-      tag={userData.tag}
-      location={userData.location}
-      image={userData.avatar}
-      stats={userData.stats}
-      /> 
+function App() {
+  const [showList, setshowList] = useState(false);
+  const [feedback, setFeedback] = useState({
+    good: 0,
+    neutral: 0,
+    bad: 0,
+    positive: 0
+  });
+
+  useEffect(() => {
+  localStorage.setItem("feedbackValue", JSON.stringify(feedback));
+}, [feedback]);
+
+  const updateFeedback = (feedbackType) => {
+    setFeedback({ ...feedback, [feedbackType]: feedback[feedbackType] + 1 });
+        setshowList(true);
+  }
+
+  const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
+  const positivePer = Math.round((feedback.good / totalFeedback) * 100);
+
+    const resetFeedback = () => {
+    setFeedback({ good: 0, neutral: 0, bad: 0, positive: 0 });
+    setshowList(false);
+  }
+
+    return (
+      <div>
+          <h1>Sip Happens Café</h1>
+          <p>Please leave your feedback about our service
+          by selecting one of the options below.</p>
+      <button type="button" onClick={() => { updateFeedback("good") }}>Good</button>
+      <button type="button" onClick={() => { updateFeedback("neutral") }}>Neutral</button>
+      <button type="button" onClick={() => { updateFeedback("bad") }}>Bad</button>
+      {showList && <button type="button" onClick={resetFeedback}>Reset</button>}
+      {!showList && <p>No feedback yet</p>}
+        {showList && <section>
+        <Cafe
+          good={feedback.good}
+          neutral={feedback.neutral}
+          bad={feedback.bad}
+            total={totalFeedback}
+            positive={positivePer}
+          updateFeedback={updateFeedback}
+        />
+      </section>}
     </div>
-    <div>
-        <FriendList friends={friends} />
-      </div>
-       <div>
-        <TransactionHistory transactions={transactions} />
-      </div>
-   </>
- );
+  );
 };
 
 export default App;
