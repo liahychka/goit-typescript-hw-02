@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Cafe from "./Cafe/Cafe"
+import Cafe from "./components/Cafe/Cafe"
 
 function App() {
   const [showList, setshowList] = useState(false);
@@ -7,7 +7,6 @@ function App() {
     good: 0,
     neutral: 0,
     bad: 0,
-    positive: 0
   });
 
   useEffect(() => {
@@ -23,7 +22,7 @@ function App() {
   const positivePer = Math.round((feedback.good / totalFeedback) * 100);
 
     const resetFeedback = () => {
-    setFeedback({ good: 0, neutral: 0, bad: 0, positive: 0 });
+    setFeedback({ good: 0, neutral: 0, bad: 0 });
     setshowList(false);
   }
 
