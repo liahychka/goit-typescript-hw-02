@@ -6,7 +6,6 @@ import Notification from "./components/Notification/Notification";
 
 
 function App() {
-  const [showList, setshowList] = useState(false);
   const [feedback, setFeedback] = useState(JSON.parse(localStorage.getItem("feedbackValue")) || {
   good: 0,
   neutral: 0,
@@ -20,7 +19,6 @@ useEffect(() => {
 
   const updateFeedback = (feedbackType) => {
     setFeedback({ ...feedback, [feedbackType]: feedback[feedbackType] + 1 });
-        setshowList(true);
   }
 
   const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
@@ -33,7 +31,7 @@ useEffect(() => {
   return (
   <div>
     <Description />
-    <Options updateFeedback={updateFeedback} totalFeedback={totalFeedback} resetFeedback={resetFeedback} showList={showList} />
+    <Options updateFeedback={updateFeedback} totalFeedback={totalFeedback} resetFeedback={resetFeedback} />
     {totalFeedback > 0 ? ( 
       <Feedback
         good={feedback.good}

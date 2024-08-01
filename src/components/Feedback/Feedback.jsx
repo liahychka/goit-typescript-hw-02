@@ -1,4 +1,4 @@
-const Feedback = ({ good, neutral, bad, total, positive, updateFeedback, totalFeedback, positivePer}) => {
+const Feedback = ({ good, neutral, bad, total, positive}) => {
     return (
         <div>
         <ul>
