@@ -1,4 +1,4 @@
-const Cafe = ({ good, neutral, bad, total, positive, updateFeedback}) => {
+const Feedback = ({ good, neutral, bad, total, positive, updateFeedback, totalFeedback, positivePer}) => {
     return (
         <div>
         <ul>
@@ -11,5 +11,5 @@ const Cafe = ({ good, neutral, bad, total, positive, updateFeedback}) => {
         </div>
     );
 }
-
-export default Cafe;
+    
+export default Feedback;
