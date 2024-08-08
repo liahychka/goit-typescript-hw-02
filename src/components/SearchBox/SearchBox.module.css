@@ -1,0 +1,8 @@
+.labelSearch {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputSearch {
+    width: 272px;
+}

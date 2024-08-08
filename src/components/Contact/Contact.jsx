@@ -1,20 +1,24 @@
 import React from 'react';
 import { FaUser } from "react-icons/fa6";
 import { FaPhoneAlt } from "react-icons/fa";
+import css from "./Contact.module.css"
 
 
-function Contact({ name, tel, deleteContacts, id }) {
+function Contact({ name, number, deleteContacts, id }) {
     return (
         <li>
-        <div>
-            <div>
-                <FaUser size="24" />
+            <div className={css.divPerson}>
+<div>
+            <div className={css.boxUsername}>
+                <FaUser size="20" />
                 <p>{name}</p>
             </div>
-            <div>
-                <FaPhoneAlt size="24" />  
-                <p>{tel}</p>    
+            <div className={css.boxPhone}>
+                <FaPhoneAlt size="20" />  
+                <p>{number}</p>    
             </div>
+</div>
+
                 <button type="button" onClick={() => deleteContacts(id)}>
                 Delete
                 </button>    
