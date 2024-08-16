@@ -14,7 +14,7 @@ function App() {
     axios
       .get("https://api.unsplash.com/photos/?client_id=CfF87_GktDHKGZeUATCI9G7_4LMIAJu0I3IwAahnDfk")
       .then(({ data }) => {
-        setPhotos(data.client);
+        setPhotos(data);
       });
   }, []);
 
