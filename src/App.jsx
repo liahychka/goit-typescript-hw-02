@@ -1,48 +1,33 @@
 import { useState, useEffect } from "react";
-import contactsJson from "./components/contacts.json"
-import ContactForm from "./components/ContactForm/ContactForm"
-import ContactList from "./components/ContactList/ContactList"
-import SearchBox from "./components/SearchBox/SearchBox"
-import Contact from "./components/Contact/Contact"
-
+import axios from "axios";
+import SearchBar from "./components/SearchBar/SearchBar";
+// import LoadMore from "./components/LoadMore/LoadMore";
+// import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
+// import ImageModal from "./components/ImageModal/ImageModal"
+import ImageCard from "./components/ImageCard/ImageCard"
 
 function App() {
+      const [photos, setPhotos] = useState(null);
 
-    const [contacts, setContacts] = useState(() => {
-    const localData = localStorage.getItem("contacts");
-    return localData ? JSON.parse(localData) : contactsJson;
-  }); 
+  useEffect(() => {
+    axios
+      .get("https://api.unsplash.com/photos/?client_id=CfF87_GktDHKGZeUATCI9G7_4LMIAJu0I3IwAahnDfk")
+      .then(({ data }) => {
+        setPhotos(data.client);
+      });
+  }, []);
 
-  const [filter, setFilter] = useState('');
 
-  const addContact = (contact) => {
-    setContacts((prevContacts) => {
-      return [...prevContacts, contact];
-    });
-  };
+  return <div>
+        <SearchBar />
+    {/* {photos.map(photo => {
+      return <div key={photo.id}>
+        <h3>{photo.title}</h3>
+      </div>
+        })}  */}
+  </div>
 
-  const deleteContacts = (id) => {
-    setContacts((prevContacts) => {
-      return prevContacts.filter((contact) => contact.id !== id)
-    });
-  }
-
-const filteredContacts = contacts.filter((contact) => contact.name.toLowerCase().includes(filter.toLowerCase()));
-
-    useEffect(() => {
-        localStorage.setItem("contacts", JSON.stringify(contacts));
-    }, [contacts]);
-  
-  return (
-    <div>
-  <h1>Phonebook</h1>
-  <ContactForm onSubmit={addContact} />
-  <SearchBox value={filter} setFilter={setFilter} />
-  <ContactList contacts={filteredContacts} deleteContacts={deleteContacts} />
-</div>
-
-  )
 }
 
-export default App;
-
+export default App; 
