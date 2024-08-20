@@ -1,0 +1,18 @@
+.boxInput {
+    background-color: rgb(72, 72, 213);
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+}
+
+.searchImg {
+    width: 21%;
+    height: 200px;
+}
+
+.boxItem {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}

@@ -1,12 +1,21 @@
-function ImageGallery() {
+import ImageCard from "../ImageCard/ImageCard"
+import css from "./ImageGallery.module.css"
+
+function ImageGallery({images, openModal}) {
     return (
-        <ul>
-        {/* Набір елементів списку із зображеннями */}
-        <li>
-          <div>
-            <img src="" alt="" />
-          </div>
-        </li>
+    <ul>
+      {images.map(({ id, description, urls: { small, regular } }) => {
+        return (
+          <li key={id} className={css.itemGallery}>
+            <ImageCard
+              small={small}
+              regular={regular}
+              description={description}
+              openModal={openModal}
+            />
+          </li>
+        );
+      })}
       </ul>
     )
 }

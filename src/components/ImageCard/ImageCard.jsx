@@ -1,7 +1,8 @@
-function ImageCard() {
+function ImageCard({ description, small, regular, openModal }) {
     return (
         <div>
-        <img src="" alt="" />
+            <img src={small} alt={description}
+            onClick={() => openModal(regular, description)}/>
         </div>
     )
 }
