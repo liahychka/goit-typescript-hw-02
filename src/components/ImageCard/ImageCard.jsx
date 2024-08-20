@@ -1,7 +1,9 @@
+import css from "./ImageCard.module.css"
+
 function ImageCard({ description, small, regular, openModal }) {
     return (
         <div>
-            <img src={small} alt={description}
+            <img className={css.searchImg} src={small} alt={description}
             onClick={() => openModal(regular, description)}/>
         </div>
     )

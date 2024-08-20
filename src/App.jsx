@@ -1,182 +1,103 @@
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-// import SearchBar from "./components/SearchBar/SearchBar";
-// import LoadMore from "./components/LoadMore/LoadMore";
-// import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
-// import ImageGallery from "./components/ImageGallery/ImageGallery";
-// import ImageModal from "./components/ImageModal/ImageModal";
-// import Loader from "./components/Loader/Loader";
-
-// function App() {
-
-//   const [images, setImages] = useState([]);
-//   const [totalPages, setTotalPages] = useState(0);
-//   const [isLoader, setIsLoader] = useState(false);
-//   const [err, setErr] = useState(null);
-//   const [page, setPage] = useState(1);
-//   const [query, setQuery] = useState("");
-//   const [loading, setLoading] = useState(false);
-//   const [isEmpty, setIsEmpty] = useState(false);
-//   const [nextPage, setNextPage] = useState(false);
-//   const [modal, setModal] = useState({ isOpen: false, imgUrl: "", imgAlt: "" });
-
-//   const handleSubmit = (searchValue) => {
-//     setQuery(searchValue);
-//     setImages([]);
-//     setPage(1);
-//     setNextPage(false);
-//     setIsEmpty(false);
-//     setErr(null);
-//   };
-  
-//   useEffect(() => {
-//     const fetchImages = async () => {
-//       setIsLoader(true);
-//       try {
-//         const response = await axios.get('https://api.unsplash.com/photos/', {
-//           params: {
-//             client_id: 'CfF87_GktDHKGZeUATCI9G7_4LMIAJu0I3IwAahnDfk',
-//             per_page: 12 
-//           }
-//         });
-        
-//         setImages(response.data);
-//         setTotalPages(response.headers['x-total-pages']);
-//         throw new Error("Please, try again.");
-//       } catch (error) {
-//         setErr(error.message);
-//       } finally {
-//         setIsLoader(false);
-//       }
-//     };
-
-//     fetchImages();
-//   }, []);
-
-//     const handleLoadMoreClick = () => {
-//     setPage((prevPage) => prevPage + 1);
-//     };
-  
-//     const openModal = (url, alt) => {
-//     setModal({ ...modal, isOpen: true, imgUrl: url, imgAlt: alt });
-//   };
-
-//   const closeModal = () => {
-//     setModal({ ...modal, isOpen: false, imgUrl: "", imgAlt: "" && "noAlt" });
-//   };
-
-//   return <div>
-//     <SearchBar  onSubmit={handleSubmit}/>
-//     {images.length > 0 && (
-//         <ImageGallery images={images} openModal={openModal} />
-//       )}
-//     {nextPage && <LoadMore handleLoadMoreClick={handleLoadMoreClick} />}
-//     { isLoader && <Loader />}
-  
-//           {images.map(image => (
-//         <div key={image.id}>
-//           <img src={image.urls.small} alt={image.alt_description} />
-//         </div>
-//           ))}
-//           {err && <ErrorMessage message={err} />}
-//       {loading && <Loader />}
-//       <ImageModal
-//         isOpen={modal.isOpen}
-//         imgUrl={modal.imgUrl}
-//         imgAlt={modal.imgAlt}
-//         closeModal={closeModal}
-//       />
-//   </div>
-
-// }
-
-// export default App; 
-
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import SearchBar from './components/SearchBar/SearchBar';
-import LoadMore from './components/LoadMore/LoadMore';
-import ErrorMessage from './components/ErrorMessage/ErrorMessage';
-import ImageGallery from './components/ImageGallery/ImageGallery';
-import ImageModal from './components/ImageModal/ImageModal';
-import Loader from './components/Loader/Loader';
-
-const API_KEY = 'CfF87_GktDHKGZeUATCI9G7_4LMIAJu0I3IwAahnDfk';
-const PER_PAGE = 12;
+import { useState, useEffect } from "react";
+import SearchBar from "./components/SearchBar/SearchBar";
+import LoadMore from "./components/LoadMore/LoadMore";
+import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
+import ImageModal from "./components/ImageModal/ImageModal";
+import Loader from "./components/Loader/Loader";
+import { renderPhoto } from "./api";
+import toast, { Toaster } from "react-hot-toast";
 
 function App() {
-  const [images, setImages] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
-  const [isEmpty, setIsEmpty] = useState(false);
-  const [nextPage, setNextPage] = useState(false);
-  const [modal, setModal] = useState({ isOpen: false, imgUrl: '', imgAlt: '' });
+  const [state, setState] = useState({
+    images: [],
+    action: "",
+    error: null,
+    page: 1,
+    loading: false,
+    isEmpty: false,
+    nextPage: false,
+    modal: { isOpen: false, imgUrl: "", imgAlt: "" },
+  });
 
   const handleSubmit = (searchValue) => {
-    setQuery(searchValue);
-    setImages([]);
-    setPage(1);
-    setNextPage(false);
-    setIsEmpty(false);
-    setError(null);
+    setState((prevState) => ({
+      ...prevState,
+      action: searchValue,
+      images: [],
+      page: 1,
+      nextPage: false,
+      isEmpty: false,
+      error: null,
+    }));
   };
 
   useEffect(() => {
+    if (!state.action) return;
+
     const fetchImages = async () => {
+      setState((prevState) => ({ ...prevState, loading: true, error: null }));
 
-      setIsLoading(true);
       try {
-        const response = await axios.get('https://api.unsplash.com', {
-          params: {
-            API_KEY,
-            PER_PAGE,
-            page,
-            query,
-          },
-        });
+        const { results, total, total_pages } = await renderPhoto(state.action, state.page);
 
-        setImages((prevImages) => [...prevImages, ...response.data]);
-        setTotalPages(response.headers['x-total-pages']);
+        if (!total) {
+          setState((prevState) => ({ ...prevState, isEmpty: true }));
+          toast("Train again!", {
+            duration: 3000,
+            position: "top-center",
+            style: { marginTop: 100 },
+          });
+        }
+
+        setState((prevState) => ({
+          ...prevState,
+          images: [...prevState.images, ...results],
+          nextPage: state.page < total_pages,
+        }));
       } catch (error) {
-        setError(error.message);
+        setState((prevState) => ({ ...prevState, error: error.message }));
       } finally {
-        setIsLoading(false);
+        setState((prevState) => ({ ...prevState, loading: false }));
       }
     };
 
-    if (query) {
-      fetchImages();
-    }
-  }, [page, query]);
+    fetchImages();
+  }, [state.action, state.page]);
 
   const handleLoadMoreClick = () => {
-    setPage((prevPage) => prevPage + 1);
+    setState((prevState) => ({ ...prevState, page: prevState.page + 1 }));
   };
 
   const openModal = (url, alt) => {
-    setModal({ ...modal, isOpen: true, imgUrl: url, imgAlt: alt });
+    setState((prevState) => ({
+      ...prevState,
+      modal: { ...prevState.modal, isOpen: true, imgUrl: url, imgAlt: alt },
+    }));
   };
 
   const closeModal = () => {
-    setModal({ ...modal, isOpen: false, imgUrl: '', imgAlt: '' });
+    setState((prevState) => ({
+      ...prevState,
+      modal: { ...prevState.modal, isOpen: false, imgUrl: "", imgAlt: "" },
+    }));
   };
 
   return (
-    <div>
+    <div className="container">
       <SearchBar onSubmit={handleSubmit} />
-      {images.length > 0 && (
-        <ImageGallery images={images} openModal={openModal} />
+
+      {state.images.length > 0 && (
+        <ImageGallery images={state.images} openModal={openModal} />
       )}
-      {nextPage && <LoadMore handleLoadMoreClick={handleLoadMoreClick} />}
-      {isLoading && <Loader />}
-      {error && <ErrorMessage message={error} />}
+      {state.nextPage && <LoadMore handleLoadMoreClick={handleLoadMoreClick} />}
+      {state.error && <ErrorMessage message={state.error} />}
+      {state.loading && <Loader />}
+      {state.isEmpty && <Toaster />}
       <ImageModal
-        isOpen={modal.isOpen}
-        imgUrl={modal.imgUrl}
-        imgAlt={modal.imgAlt}
+        isOpen={state.modal.isOpen}
+        imgUrl={state.modal.imgUrl}
+        imgAlt={state.modal.imgAlt}
         closeModal={closeModal}
       />
     </div>
@@ -184,3 +105,5 @@ function App() {
 }
 
 export default App;
+
+

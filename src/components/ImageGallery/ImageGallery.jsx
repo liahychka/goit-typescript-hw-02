@@ -3,7 +3,7 @@ import css from "./ImageGallery.module.css"
 
 function ImageGallery({images, openModal}) {
     return (
-    <ul>
+    <ul className={css.imgList}>
       {images.map(({ id, description, urls: { small, regular } }) => {
         return (
           <li key={id} className={css.itemGallery}>
