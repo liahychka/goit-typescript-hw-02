@@ -2,9 +2,9 @@ import ImageCard from "../ImageCard/ImageCard"
 import css from "./ImageGallery.module.css"
 import React, { FC } from "react";
 
-export interface ImageGalleryProps {
+interface ImageGalleryProps {
   images: {id: number, description: string, urls: {small: string, regular: string}}[];
-  openModal: () => void;
+  openModal: any;
 }
 
 const ImageGallery: FC<ImageGalleryProps> = ({ images, openModal }) => {

@@ -1,35 +1,44 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar/SearchBar";
 import LoadMore from "./components/LoadMore/LoadMore";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
-import ImageGallery, { ImageGalleryProps } from "./components/ImageGallery/ImageGallery";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
 import ImageModal from "./components/ImageModal/ImageModal";
 import Loader from "./components/Loader/Loader";
 import { renderPhoto } from "./api";
 import toast, { Toaster } from "react-hot-toast";
 
+interface Image {
+  id: number;
+  description: string;
+  urls: {
+    small: string;
+    regular: string;
+  };
+}
 
-export interface MyState {
-    images: string[],
-    action: string,
-    error: string | null,
-    page: number,
-    loading: boolean,
-    isEmpty: boolean,
-    nextPage: boolean,
-    modal: { isOpen: boolean, imgUrl: string, imgAlt: string },
- }
-  
+interface MyState {
+  images: Image[];
+  action: string;
+  error: string | null;
+  page: number;
+  loading: boolean;
+  isEmpty: boolean;
+  nextPage: boolean;
+  modal: {
+    isOpen: boolean;
+    imgUrl: string;
+    imgAlt: string;
+  };
+}
 
-  interface totalPages {
-        results: string[];
-        total: number;
-        total_pages: number;
-      }
+interface TotalPagesResponse {
+  results: Image[];
+  total: number;
+  total_pages: number;
+}
 
-function App() {
-
-
+const App: React.FC = () => {
   const [state, setState] = useState<MyState>({
     images: [],
     action: "",
@@ -41,7 +50,7 @@ function App() {
     modal: { isOpen: false, imgUrl: "", imgAlt: "" },
   });
 
-  const handleSubmit = (searchValue: string): void  => {
+  const handleSubmit = (searchValue: string) => {
     setState((prevState) => ({
       ...prevState,
       action: searchValue,
@@ -59,10 +68,8 @@ function App() {
     const fetchImages = async () => {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
 
-
-
       try {
-        const { results, total, total_pages }: totalPages = await renderPhoto(state.action, state.page);
+        const { results, total, total_pages }: TotalPagesResponse = await renderPhoto(state.action, state.page);
 
         if (!total) {
           setState((prevState) => ({ ...prevState, isEmpty: true }));
@@ -95,14 +102,14 @@ function App() {
   const openModal = (url: string, alt: string) => {
     setState((prevState) => ({
       ...prevState,
-      modal: { ...prevState.modal, isOpen: true, imgUrl: url, imgAlt: alt },
+      modal: { isOpen: true, imgUrl: url, imgAlt: alt },
     }));
   };
 
   const closeModal = () => {
     setState((prevState) => ({
       ...prevState,
-      modal: { ...prevState.modal, isOpen: false, imgUrl: "", imgAlt: "" },
+      modal: { isOpen: false, imgUrl: "", imgAlt: "" },
     }));
   };
 
@@ -125,9 +132,7 @@ function App() {
       />
     </div>
   );
-}
-
+};
 
 export default App;
-
 
