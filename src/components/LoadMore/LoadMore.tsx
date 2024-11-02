@@ -1,6 +1,11 @@
 import css from "./LoadMore.module.css"
+import React, { FC } from "react";
 
-function LoadMore({ handleLoadMoreClick }) {
+interface LoadMoreProps {
+  handleLoadMoreClick: () => void;
+}
+
+const LoadMore: FC<LoadMoreProps> = ({ handleLoadMoreClick }) => {
   return (
       <div className={css.boxBtn}>
           <button className={css.btnLoad} type="button" onClick={handleLoadMoreClick}>

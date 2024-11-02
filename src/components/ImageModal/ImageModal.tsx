@@ -1,9 +1,17 @@
 import Modal from "react-modal";
 import css from "./ImageModal.module.css"
+import React, { FC } from "react";
 
 Modal.setAppElement("#root");
 
-const ImageModal = ({ isOpen, closeModal, imgUrl, imgAlt }) => {
+interface ImageModalProps {
+  isOpen: boolean;
+  imgUrl: string;
+  imgAlt: string;
+  closeModal: () => void;
+}
+
+const ImageModal: FC<ImageModalProps> = ({ isOpen, closeModal, imgUrl, imgAlt }) => {
   return (
     <Modal
       isOpen={isOpen}

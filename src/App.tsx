@@ -2,14 +2,35 @@ import { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar/SearchBar";
 import LoadMore from "./components/LoadMore/LoadMore";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
-import ImageGallery from "./components/ImageGallery/ImageGallery";
+import ImageGallery, { ImageGalleryProps } from "./components/ImageGallery/ImageGallery";
 import ImageModal from "./components/ImageModal/ImageModal";
 import Loader from "./components/Loader/Loader";
 import { renderPhoto } from "./api";
 import toast, { Toaster } from "react-hot-toast";
 
+
+export interface MyState {
+    images: string[],
+    action: string,
+    error: string | null,
+    page: number,
+    loading: boolean,
+    isEmpty: boolean,
+    nextPage: boolean,
+    modal: { isOpen: boolean, imgUrl: string, imgAlt: string },
+ }
+  
+
+  interface totalPages {
+        results: string[];
+        total: number;
+        total_pages: number;
+      }
+
 function App() {
-  const [state, setState] = useState({
+
+
+  const [state, setState] = useState<MyState>({
     images: [],
     action: "",
     error: null,
@@ -20,7 +41,7 @@ function App() {
     modal: { isOpen: false, imgUrl: "", imgAlt: "" },
   });
 
-  const handleSubmit = (searchValue) => {
+  const handleSubmit = (searchValue: string): void  => {
     setState((prevState) => ({
       ...prevState,
       action: searchValue,
@@ -38,8 +59,10 @@ function App() {
     const fetchImages = async () => {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
 
+
+
       try {
-        const { results, total, total_pages } = await renderPhoto(state.action, state.page);
+        const { results, total, total_pages }: totalPages = await renderPhoto(state.action, state.page);
 
         if (!total) {
           setState((prevState) => ({ ...prevState, isEmpty: true }));
@@ -56,7 +79,7 @@ function App() {
           nextPage: state.page < total_pages,
         }));
       } catch (error) {
-        setState((prevState) => ({ ...prevState, error: error.message }));
+        setState((prevState) => ({ ...prevState, error: (error as Error).message }));
       } finally {
         setState((prevState) => ({ ...prevState, loading: false }));
       }
@@ -69,7 +92,7 @@ function App() {
     setState((prevState) => ({ ...prevState, page: prevState.page + 1 }));
   };
 
-  const openModal = (url, alt) => {
+  const openModal = (url: string, alt: string) => {
     setState((prevState) => ({
       ...prevState,
       modal: { ...prevState.modal, isOpen: true, imgUrl: url, imgAlt: alt },
@@ -103,6 +126,7 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
 
